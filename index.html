@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product Thinking Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap">
+<style>
+  :root{
+    --paper:#EFEFF2;
+    --surface:#FBFBFD;
+    --surface-2:#E5E5EC;
+    --ink:#191922;
+    --ink-2:#4C4C5A;
+    --ink-3:#77778A;
+    --rule:#D6D6E0;
+    --rule-soft:#E3E3EB;
+    --accent:#2F3AA3;
+    --accent-soft:rgba(47,58,163,.09);
+    --add:#2C6E49;
+    --add-bg:rgba(44,110,73,.09);
+    --add-rule:rgba(44,110,73,.42);
+    --del:#98421F;
+    --del-bg:rgba(152,66,31,.08);
+    --del-rule:rgba(152,66,31,.34);
+    --shadow:0 1px 2px rgba(25,25,34,.05), 0 8px 24px -18px rgba(25,25,34,.35);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#131318;
+      --surface:#1A1A22;
+      --surface-2:#23232D;
+      --ink:#E9E9F0;
+      --ink-2:#B0B0C0;
+      --ink-3:#83839A;
+      --rule:#2F2F3B;
+      --rule-soft:#26262F;
+      --accent:#9CA2F6;
+      --accent-soft:rgba(156,162,246,.13);
+      --add:#7CC79C;
+      --add-bg:rgba(124,199,156,.10);
+      --add-rule:rgba(124,199,156,.34);
+      --del:#E7A183;
+      --del-bg:rgba(231,161,131,.09);
+      --del-rule:rgba(231,161,131,.30);
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#131318;
+    --surface:#1A1A22;
+    --surface-2:#23232D;
+    --ink:#E9E9F0;
+    --ink-2:#B0B0C0;
+    --ink-3:#83839A;
+    --rule:#2F2F3B;
+    --rule-soft:#26262F;
+    --accent:#9CA2F6;
+    --accent-soft:rgba(156,162,246,.13);
+    --add:#7CC79C;
+    --add-bg:rgba(124,199,156,.10);
+    --add-rule:rgba(124,199,156,.34);
+    --del:#E7A183;
+    --del-bg:rgba(231,161,131,.09);
+    --del-rule:rgba(231,161,131,.30);
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.8);
+  }
+
+  *{box-sizing:border-box;}
+  html{color-scheme:light dark;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size:16.5px;
+    line-height:1.6;
+    padding-inline:20px;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,.stem{font-family:Newsreader, Georgia, "Times New Roman", serif;font-weight:500;text-wrap:balance;margin:0;}
+  p{margin:0;}
+  .mono{font-family:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;}
+
+  header.top{
+    max-width:41rem;margin-inline:auto;width:100%;
+    display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;align-items:baseline;justify-content:space-between;
+    border-bottom:1px solid var(--rule);padding-block:1.3rem .9rem;
+  }
+  header.top .brand{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);}
+  header.top .count{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.06em;color:var(--ink-3);font-variant-numeric:tabular-nums;}
+
+  .wrap{max-width:41rem;margin-inline:auto;width:100%;padding-block:1.5rem 3rem;display:flex;flex-direction:column;gap:1.5rem;}
+
+  /* progress ticks */
+  .progress{display:flex;gap:4px;}
+  .progress span{flex:1;height:3px;background:var(--rule);border-radius:2px;}
+  .progress span.now{background:var(--accent);}
+  .progress span.ok{background:var(--add-rule);}
+  .progress span.no{background:var(--del-rule);}
+
+  .tag{
+    font-family:"IBM Plex Mono",monospace;font-size:.69rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--accent);display:flex;align-items:center;gap:.7rem;
+  }
+  .tag::after{content:"";height:1px;flex:1;background:var(--rule);}
+  .stem{font-size:clamp(1.4rem,4.2vw,1.82rem);line-height:1.22;margin-block:.9rem 1.25rem;}
+  .stem .quote{display:block;font-size:.86em;color:var(--ink-2);border-left:2px solid var(--rule);padding-left:.8rem;margin-top:.7rem;}
+
+  /* options */
+  .opts{display:flex;flex-direction:column;gap:.55rem;}
+  .opt{
+    font:inherit;text-align:left;cursor:pointer;
+    display:grid;grid-template-columns:2rem 1fr;gap:.7rem;align-items:start;
+    background:var(--surface);color:var(--ink);
+    border:1px solid var(--rule);border-radius:3px;
+    padding:.85rem .95rem;box-shadow:var(--shadow);
+    transition:border-color .12s ease, background-color .12s ease;
+  }
+  .opt .key{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--ink-3);padding-top:.13rem;white-space:nowrap;}
+  .opt:hover:not([data-locked]){border-color:var(--accent);}
+  .opt[data-locked]{cursor:default;box-shadow:none;}
+  .opt[data-locked]:not(.right):not(.wrong){opacity:.55;}
+  .opt.right{background:var(--add-bg);border-color:var(--add-rule);color:var(--add);}
+  .opt.right .key,.opt.wrong .key{color:inherit;}
+  .opt.wrong{background:var(--del-bg);border-color:var(--del-rule);color:var(--del);}
+  .opt.right .key::before{content:"+ ";}
+  .opt.wrong .key::before{content:"− ";}
+
+  /* explanation */
+  .why{display:flex;flex-direction:column;gap:.75rem;}
+  .why:empty{display:none;}
+  .verdict{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;}
+  .verdict.ok{color:var(--add);}
+  .verdict.no{color:var(--del);}
+  .why p.text{color:var(--ink-2);font-size:.97rem;}
+  .why p.text b{color:var(--ink);font-weight:600;}
+  .diff{background:var(--surface);border:1px solid var(--rule);border-radius:3px;overflow:hidden;}
+  .diff div{
+    font-family:"IBM Plex Mono",monospace;font-size:.84rem;line-height:1.5;padding:.6rem .85rem;
+    display:grid;grid-template-columns:1.2rem 1fr;gap:.35rem;
+  }
+  .diff .m{background:var(--del-bg);color:var(--del);box-shadow:inset 3px 0 0 var(--del-rule);}
+  .diff .p{background:var(--add-bg);color:var(--add);box-shadow:inset 3px 0 0 var(--add-rule);border-top:1px solid var(--rule-soft);}
+
+  /* buttons */
+  .btn{
+    font:inherit;font-weight:500;cursor:pointer;align-self:flex-start;
+    background:var(--accent);color:var(--paper);border:1px solid var(--accent);
+    border-radius:3px;padding:.6rem 1.1rem;
+  }
+  :root[data-theme="dark"] .btn{color:#131318;}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn{color:#131318;}}
+  .btn.ghost{background:transparent;color:var(--accent);}
+  .btn:hover{filter:brightness(1.08);}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px;}
+
+  /* results */
+  .score{font-family:Newsreader,Georgia,serif;font-size:clamp(2.6rem,9vw,3.6rem);line-height:1;font-variant-numeric:tabular-nums;}
+  .score small{font-size:.42em;color:var(--ink-3);}
+  .review{display:flex;flex-direction:column;margin-block:.5rem;}
+  .review > div{padding:.85rem 0;border-top:1px solid var(--rule-soft);display:flex;flex-direction:column;gap:.2rem;}
+  .review > div:first-child{border-top:0;}
+  .review .rq{font-size:.93rem;display:grid;grid-template-columns:1.6rem 1fr;gap:.5rem;}
+  .review .rq .m{font-family:"IBM Plex Mono",monospace;font-size:.78rem;padding-top:.15rem;}
+  .review .ok .m{color:var(--add);}
+  .review .no .m{color:var(--del);}
+  .review .take{font-size:.88rem;color:var(--ink-2);padding-left:2.1rem;}
+  .review .yours{font-size:.82rem;color:var(--del);padding-left:2.1rem;font-family:"IBM Plex Mono",monospace;}
+
+  footer{
+    max-width:41rem;margin-inline:auto;width:100%;border-top:1px solid var(--rule);
+    padding-block:1.1rem 2.5rem;font-size:.8rem;color:var(--ink-3);
+  }
+  footer a{color:var(--accent);}
+  @media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important;}}
+  @media (max-width:520px){
+    .opt{grid-template-columns:1.7rem 1fr;gap:.5rem;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <span class="brand">Product Thinking Quiz</span>
+  <span class="count" id="count">Question 1 of 8</span>
+</header>
+
+<div class="wrap">
+  <div class="progress" id="prog" aria-hidden="true"></div>
+  <main id="stage"></main>
+</div>
+
+<footer>
+  Eight questions on the frameworks from the product thinking guide — the three shifts, 5 Whys, the 4Cs, metrics, de-risking and staged delivery. Frameworks adapted from <a href="https://www.idg.gov.sg/product-thinking/">Singapore&rsquo;s IDG pathway</a>.
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var QUESTIONS = [
+    {
+      tag: "Problems before solutions",
+      stem: "A stakeholder files a ticket: <span class=\"quote\">&ldquo;Add a CSV export button to the reports page.&rdquo;</span>",
+      ask: "What&rsquo;s the most useful first move?",
+      options: [
+        { t: "Estimate it and pull it into the sprint" },
+        { t: "Ask what people do with the numbers after they export them", ok: true },
+        { t: "Build a configurable export with column selection, so it covers future asks" },
+        { t: "Push back — it isn&rsquo;t on the roadmap this quarter" }
+      ],
+      why: "A request is <b>data about a problem, not a specification</b>. One question surfaces the real job — and the answer is usually smaller than the ticket.",
+      diff: { m: "Add a CSV export button", p: "Four ops leads retype these numbers into a Monday slide" },
+      also: "Configurability is gold-plating bought before you know the second case. Refusing is obstruction — you still don&rsquo;t know what the work is for.",
+      take: "The request is evidence of a problem. Go find the problem."
+    },
+    {
+      tag: "Outputs vs outcomes",
+      stem: "Four things a team reported at the end of a quarter.",
+      ask: "Which one is an <em>outcome</em>?",
+      options: [
+        { t: "The importer now supports five delimiters" },
+        { t: "First-attempt import success rose from 61% to 90%", ok: true },
+        { t: "The docs page was published" },
+        { t: "Twelve story points closed" }
+      ],
+      why: "An output is what you delivered. An outcome is <b>what became different because you delivered it</b>. Every other line here can be true while nothing changed for anyone.",
+      diff: { m: "Shipped: importer supports five delimiters", p: "Changed: first-attempt import success 61% → 90%" },
+      take: "Outputs can all be green while the outcome never moves."
+    },
+    {
+      tag: "Five Whys",
+      stem: "You&rsquo;re running a Five Whys on a spike in failed imports. Your fourth &ldquo;why&rdquo; lands on: <span class=\"quote\">&ldquo;The user uploaded a file in the wrong format.&rdquo;</span>",
+      ask: "What now?",
+      options: [
+        { t: "Stop — that&rsquo;s the root cause" },
+        { t: "Stop — the real cause is Excel&rsquo;s locale defaults, which are outside our control" },
+        { t: "Ask why again: why was that so easy to do, and why did the product fail that way?", ok: true },
+        { t: "Stop at exactly five whys, whatever the fifth one says" }
+      ],
+      why: "Landing on a person being careless means the analysis stopped early. <b>Keep going until you reach a cause you could change this sprint</b> — here, that the parser accepts one delimiter and the error explains nothing.",
+      also: "&ldquo;Outside our control&rdquo; is where the useful part starts, not where it ends. And five isn&rsquo;t a magic number — it&rsquo;s a reminder not to stop at the first plausible answer.",
+      take: "If the last why blames a user, go one more."
+    },
+    {
+      tag: "The 4Cs",
+      stem: "A problem statement reads: <span class=\"quote\">&ldquo;New customers on European Excel locales can&rsquo;t complete their first import — 39% of first imports fail. We accept only comma delimiters and surface the raw parser error.&rdquo;</span>",
+      ask: "Which of the 4Cs is missing?",
+      options: [
+        { t: "Clarity — what the problem is, in plain words" },
+        { t: "Consequence — what it costs, and to whom" },
+        { t: "Cause — why it exists" },
+        { t: "Confirmation — how we know it&rsquo;s real", ok: true }
+      ],
+      why: "Clarity, Consequence (39%) and Cause (one delimiter, raw error) are all there. What&rsquo;s missing is the <b>evidence</b>: 22 of last quarter&rsquo;s 60 tickets attach a semicolon file, and replays show nine users retrying the same file three times, then leaving.",
+      also: "Confirmation is the C engineers skip, and it&rsquo;s the one that separates a problem from a hunch.",
+      take: "A problem without evidence is a hunch with a paragraph around it."
+    },
+    {
+      tag: "Leading &amp; lagging",
+      stem: "You ship the import fix on Monday.",
+      ask: "Which of these is a <em>leading</em> indicator?",
+      options: [
+        { t: "Quarterly support ticket volume" },
+        { t: "Share of uploads where the delimiter was auto-detected", ok: true },
+        { t: "Day-7 activation rate" },
+        { t: "Trial-to-paid conversion" }
+      ],
+      why: "Leading indicators are the early links in the same causal chain — visible in days, and <b>still early enough to act on</b>. The other three are lagging: they&rsquo;re the ones that count, and they arrive far too late to steer by.",
+      diff: { m: "lagging — quarterly support volume: true, and three months late", p: "leading — delimiter auto-detected on 71% of uploads: visible Tuesday" },
+      also: "Ship the leading one in the same PR as the feature. Instrumentation that lands a sprint later never lands.",
+      take: "Watch the leading ones; report the lagging ones."
+    },
+    {
+      tag: "SMART targets",
+      stem: "Four ways of stating the same goal.",
+      ask: "Which one would let two people agree, with no discussion, on whether it happened?",
+      options: [
+        { t: "Reduce import failures" },
+        { t: "Raise first-attempt import success from 61% to 85% for new accounts by the end of Q3", ok: true },
+        { t: "Make imports significantly more reliable this year" },
+        { t: "Get import success as high as we reasonably can" }
+      ],
+      why: "Specific, measurable, achievable, relevant, time-bound — but the practical test is simpler: <b>could two people disagree about whether you hit it?</b> If yes, it isn&rsquo;t a target yet.",
+      diff: { m: "Reduce import failures", p: "61% → 85% for new accounts, by end of Q3" },
+      also: "A goal you can&rsquo;t settle objectively gets settled by whoever argues most confidently in the room.",
+      take: "If two people could disagree about whether you hit it, it isn&rsquo;t a target."
+    },
+    {
+      tag: "Riskiest assumption",
+      stem: "Someone proposes a weekly scheduled report email. It sounds plausible, but nobody knows whether teams would actually use it.",
+      ask: "What do you build first?",
+      options: [
+        { t: "A production scheduler with a job queue and retries" },
+        { t: "A design doc and an RFC, so the team can agree on the architecture" },
+        { t: "Send it by hand every Monday to five teams, from a spreadsheet", ok: true },
+        { t: "A feature flag and an A/B testing framework" }
+      ],
+      why: "The riskiest assumption is that anyone wants it — that&rsquo;s market risk, and it&rsquo;s the cheapest to test: <b>real users, fake product</b>. Doing it manually for five teams answers in a week what the scheduler would answer in a quarter.",
+      also: "A Singapore government team validated health appointment booking with a form wired to a spreadsheet before building anything: zero bookings in the control arm, 24 in the treatment. Then they built it.",
+      take: "Find the riskiest assumption, then buy the cheapest answer to it."
+    },
+    {
+      tag: "Staged delivery",
+      stem: "Your prototype answered the question it was built for: yes, this can be built. Nobody has confirmed yet that anyone wants it.",
+      ask: "Which of these would be the mistake?",
+      options: [
+        { t: "Throwing the prototype away and writing the real thing later" },
+        { t: "Hardcoding the one customer&rsquo;s account ID for now" },
+        { t: "Generalising it into a plugin system so future integrations drop straight in", ok: true },
+        { t: "Putting it in front of five real users while it&rsquo;s still unpolished" }
+      ],
+      why: "That&rsquo;s stage-three work done at stage one. Proof of concept asks <em>does it work</em>; proof of value asks <em>does it help anyone</em>. <b>The abstraction is built before there&rsquo;s evidence about which abstraction you need</b> — and once shipped, it bills you every month forever.",
+      diff: { m: "A plugin system for the integrations we&rsquo;ll surely have", p: "Hardcode it until the second real case arrives" },
+      also: "It doesn&rsquo;t feel like risk. It feels like being thorough. That&rsquo;s what makes it the common one.",
+      take: "Build for the stage you&rsquo;re in, not the one you hope for."
+    }
+  ];
+
+  var stage = document.getElementById("stage");
+  var prog = document.getElementById("prog");
+  var count = document.getElementById("count");
+  var state = { i: 0, answers: [], locked: false, order: [] };
+
+  function shuffle(n){
+    var a = [], i, j, t;
+    for (i = 0; i < n; i++) a.push(i);
+    for (i = a.length - 1; i > 0; i--){
+      j = Math.floor(Math.random() * (i + 1));
+      t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function buildProgress(){
+    prog.innerHTML = "";
+    for (var i = 0; i < QUESTIONS.length; i++) prog.appendChild(document.createElement("span"));
+  }
+
+  function paintProgress(){
+    var ticks = prog.children, i;
+    for (i = 0; i < ticks.length; i++){
+      ticks[i].className = "";
+      if (state.answers[i]) ticks[i].className = state.answers[i].correct ? "ok" : "no";
+      else if (i === state.i && !isDone()) ticks[i].className = "now";
+    }
+  }
+
+  function isDone(){ return state.answers.filter(Boolean).length === QUESTIONS.length; }
+
+  function el(tag, cls, html){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html != null) e.innerHTML = html;
+    return e;
+  }
+
+  function renderQuestion(){
+    var q = QUESTIONS[state.i];
+    state.locked = false;
+    state.order = shuffle(q.options.length);
+    count.textContent = "Question " + (state.i + 1) + " of " + QUESTIONS.length;
+    stage.innerHTML = "";
+
+    var card = el("section");
+    card.appendChild(el("p", "tag", q.tag));
+    card.appendChild(el("h1", "stem", q.stem + "<br>" + q.ask));
+
+    var opts = el("div", "opts");
+    opts.setAttribute("role", "group");
+    opts.setAttribute("aria-label", "Answer options");
+    state.order.forEach(function(oi, pos){
+      var o = q.options[oi];
+      var b = el("button", "opt");
+      b.type = "button";
+      b.appendChild(el("span", "key", String(pos + 1)));
+      b.appendChild(el("span", "txt", o.t));
+      b.addEventListener("click", function(){ answer(pos); });
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+
+    var why = el("div", "why");
+    why.id = "why";
+    why.setAttribute("role", "status");
+    why.setAttribute("aria-live", "polite");
+    card.appendChild(why);
+
+    stage.appendChild(card);
+    paintProgress();
+  }
+
+  function answer(pos){
+    if (state.locked) return;
+    state.locked = true;
+
+    var q = QUESTIONS[state.i];
+    var chosen = q.options[state.order[pos]];
+    var correct = !!chosen.ok;
+    state.answers[state.i] = { correct: correct, chosen: chosen.t };
+
+    var buttons = stage.querySelectorAll(".opt");
+    Array.prototype.forEach.call(buttons, function(b, p){
+      var o = q.options[state.order[p]];
+      b.setAttribute("data-locked", "true");
+      b.setAttribute("aria-disabled", "true");
+      if (o.ok) b.classList.add("right");
+      else if (p === pos) b.classList.add("wrong");
+    });
+
+    var why = document.getElementById("why");
+    why.appendChild(el("p", "verdict " + (correct ? "ok" : "no"),
+      correct ? "Correct" : "Not quite — the right answer is marked above"));
+    why.appendChild(el("p", "text", q.why));
+    if (q.diff){
+      var d = el("div", "diff");
+      d.appendChild(el("div", "m", "<span>&minus;</span><span>" + q.diff.m + "</span>"));
+      d.appendChild(el("div", "p", "<span>+</span><span>" + q.diff.p + "</span>"));
+      why.appendChild(d);
+    }
+    if (q.also) why.appendChild(el("p", "text", q.also));
+
+    var next = el("button", "btn", state.i === QUESTIONS.length - 1 ? "See your score →" : "Next question →");
+    next.type = "button";
+    next.addEventListener("click", advance);
+    why.appendChild(next);
+    next.focus();
+
+    paintProgress();
+  }
+
+  function advance(){
+    if (!state.locked) return;
+    if (state.i === QUESTIONS.length - 1) renderResults();
+    else { state.i++; renderQuestion(); window.scrollTo(0, 0); }
+  }
+
+  function verdictLine(score){
+    if (score === 8) return "Nothing left to teach you here. Go ask someone what their Monday looks like.";
+    if (score >= 6) return "Solid. You&rsquo;d catch most bad tickets before the estimate — which is where catching them is cheap.";
+    if (score >= 4) return "The instincts are there; the frameworks aren&rsquo;t automatic yet. The misses below name which ones to reread.";
+    return "Worth a second pass through the guide. Each miss below points at the section that covers it.";
+  }
+
+  function renderResults(){
+    var score = state.answers.filter(function(a){ return a && a.correct; }).length;
+    count.textContent = "Complete";
+    stage.innerHTML = "";
+
+    var card = el("section");
+    card.appendChild(el("p", "tag", "Your score"));
+    card.appendChild(el("p", "score", score + "<small> / " + QUESTIONS.length + "</small>"));
+    card.appendChild(el("h2", "stem", verdictLine(score)));
+
+    var review = el("div", "review");
+    QUESTIONS.forEach(function(q, i){
+      var a = state.answers[i] || { correct: false, chosen: "—" };
+      var row = el("div", a.correct ? "ok" : "no");
+      row.appendChild(el("p", "rq",
+        "<span class=\"m\">" + (a.correct ? "+" : "&minus;") + "</span><span>" + q.tag + "</span>"));
+      if (!a.correct) row.appendChild(el("p", "yours", "you chose: " + a.chosen));
+      row.appendChild(el("p", "take", q.take));
+      review.appendChild(row);
+    });
+    card.appendChild(review);
+
+    var again = el("button", "btn ghost", "Try again ↺");
+    again.type = "button";
+    again.addEventListener("click", function(){
+      state = { i: 0, answers: [], locked: false, order: [] };
+      renderQuestion();
+      window.scrollTo(0, 0);
+    });
+    card.appendChild(again);
+
+    stage.appendChild(card);
+    paintProgress();
+    window.scrollTo(0, 0);
+  }
+
+  document.addEventListener("keydown", function(e){
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (!state.locked && /^[1-4]$/.test(e.key)){
+      var buttons = stage.querySelectorAll(".opt");
+      var idx = parseInt(e.key, 10) - 1;
+      if (buttons[idx]){ e.preventDefault(); answer(idx); }
+      return;
+    }
+    if (state.locked && (e.key === "ArrowRight")){ e.preventDefault(); advance(); }
+  });
+
+  buildProgress();
+  renderQuestion();
+})();
+</script>
+</body>
+</html>
